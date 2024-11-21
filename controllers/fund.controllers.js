@@ -22,12 +22,17 @@ const fundData = async (req, res) => {
                 });
             }
 
+
+            if (amount <= 0) {
+                return res.status(400).json({ error: "Invalid amount" });
+              }
+
 const fundUser = await fundModel.findOneAndUpdate({
     email:  validUser.email,
     amount,
     plan,
     
-})
+},  { new: true, upsert: true } )
 
 
 

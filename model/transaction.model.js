@@ -2,8 +2,7 @@ import mongoose from "mongoose"
 
 const transactionSchema = mongoose.Schema({
     user: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
+        type: String,
         required: true
      },
   amount: { 
@@ -15,10 +14,10 @@ const transactionSchema = mongoose.Schema({
     enum: ['deposit', 'withdrawal'], 
     required: true 
 },
-  transactionHash: { 
-    type: String, 
-    required: true
- },  // Bitcoin transaction hash
+//   transactionHash: { 
+//     type: String, 
+//     required: true
+//  },  // Bitcoin transaction hash
   status: { type: String, 
     enum: ['pending', 'completed', 'failed'], 
     default: 'pending' },

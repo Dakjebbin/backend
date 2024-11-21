@@ -18,18 +18,21 @@ import Transaction from "../model/transaction.model.js";
 const updateProfit = async (req, res) => {
 
     try {
-        const {email, profitAmount} = req.body;
-        const validatedUser = req.user
+        const {email, profit} = req.body;
 
-        // if (!profitAmount || !isNaN(profitAmount)) {
-        //     res.status(400).json({
-        //         success:false,
-        //         message: "invalid profit amount"
-        //     })
-        //     return
-        // }
 
-        const user = await User.findOneAndUpdate({email}, {profitAmount}, {new: true});
+        if (isNaN(profit)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid profit value"
+            });
+        }
+        
+        const profitValue = Number(profit);
+
+        const user = await User.findOneAndUpdate({email}, 
+            { $inc: { profit: profitValue } },
+             {new: true});
 
         if (!user) {
             return res.status(404).json({
@@ -40,7 +43,7 @@ const updateProfit = async (req, res) => {
         }
            
         
-        parseInt(user.profit += Number(profitAmount));
+        // user.profit = Number(user.profit) + Number(profit);
         await user.save();
         
         res.status(200).json({
@@ -49,7 +52,11 @@ const updateProfit = async (req, res) => {
             user
         });
     } catch (error) {
-        
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error
+        })
     }
     
 }

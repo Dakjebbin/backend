@@ -38,10 +38,10 @@ const UserSchema = mongoose.Schema({
     //     type: Number, 
     //     default: 0 
     // },
-    // profit: { 
-    //     type: Number, 
-    //     default: 0 
-    // },
+     profit: { 
+         type: Number, 
+         default: 0 
+     },
     status: { 
         type: String, 
         enum: ['active', 'blocked'], 

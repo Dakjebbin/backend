@@ -136,15 +136,15 @@ const login = async (req, res) => {
         });       
 
         res.cookie("access_Token", accessToken, {
-            httpOnly: true,
-            secure: true,
+            //httpOnly: true,
+            //secure: true,
             sameSite:"none",
             maxAge: 40 * 1000,
         })
 
         res.cookie("refresh_Token", refreshToken, {
-           httpOnly: true,
-            secure: true,
+           //httpOnly: true,
+           // secure: true,
             sameSite:"none",
             maxAge: 2 * 60 * 60 * 1000,
         })
@@ -236,4 +236,57 @@ const validuser = req.user;
   }
 }
 
-export {register, login, userDetails, userDetail, validate} 
+const updateActiveStatus = async (req, res) => {
+       
+    const { id } = req.params;
+    const { status } = req.body;
+    try {
+            if (!status) {
+                res.status(400).json({
+                    success: false,
+                    message: "Please provide status"
+                });
+                return;
+            }
+
+            const validStatuses = ['active', 'blocked']; // Add other valid statuses if needed
+            if (!validStatuses.includes(status)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid status. Allowed statuses are: ${validStatuses.join(', ')}`
+                });
+            }
+
+       const statusActive = await User.findByIdAndUpdate(
+        id,
+        {status},
+         { new: true }
+        ).exec()
+
+             
+        if (!statusActive) {
+            res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+            return;
+        } 
+
+            
+                res.status(201).json({
+                    success: true,
+                    message: "User status updated successfully",
+                    statusActive
+                });
+            
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Internal server error" + error.message,
+              });
+        }
+
+
+}
+
+export {register, login, userDetails, userDetail, validate, updateActiveStatus} 
