@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 
+
 const register = async (req, res) => {
    
    try {
@@ -289,4 +290,31 @@ const updateActiveStatus = async (req, res) => {
 
 }
 
-export {register, login, userDetails, userDetail, validate, updateActiveStatus} 
+const logout = async (req, res) => {
+
+        try {
+            res.clearcookie("access_Token", {
+                httpOnly: true,
+                secure: true,
+                 sameSite:"none",
+        })
+        res.clearCookie("refresh_Token", {
+            httpOnly: true,
+            secure: true,
+             sameSite:"none",
+        })
+    
+        return res.status(200).json({
+            success: true,
+            message: "logout successful",
+          });
+    
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Internal server error",
+              });
+        }
+   }
+
+export {register, login, userDetails, userDetail, validate, updateActiveStatus, logout} 
