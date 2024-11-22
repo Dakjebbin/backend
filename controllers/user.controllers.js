@@ -145,7 +145,7 @@ const login = async (req, res) => {
 
         res.cookie("refresh_Token", refreshToken, {
           httpOnly: true,
-           secure: true,
+          secure: true,
             sameSite:"none",
             maxAge: 2 * 60 * 60 * 1000,
         })
@@ -293,7 +293,7 @@ const updateActiveStatus = async (req, res) => {
 const logout = async (req, res) => {
 
         try {
-            res.clearcookie("access_Token", {
+            res.clearCookie("access_Token", {
                 httpOnly: true,
                 secure: true,
                  sameSite:"none",
