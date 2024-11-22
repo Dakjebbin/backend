@@ -1,4 +1,5 @@
 import fundModel from "../model/fund.model.js";
+import Transaction from "../model/transaction.model.js";
 
 
 const fundData = async (req, res) => {
@@ -27,22 +28,29 @@ const fundData = async (req, res) => {
                 return res.status(400).json({ error: "Invalid amount" });
               }
 
-const fundUser = await fundModel.findOneAndUpdate({
-    email:  validUser.email,
-    amount,
-    plan,
-    
-},  { new: true, upsert: true } )
+const fundUser = await fundModel.findOneAndUpdate(
+    {email:  validUser.email},
+    {amount, plan},
+    { new: true, upsert: true }
+ );
 
 
 
-parseInt(fundUser.amount += Number(amount));
+fundUser.amount += Number(amount);
         await fundUser.save();
+
+        const newTransaction = new Transaction({
+            user: validUser.email,  
+            amount: amount,
+            type: "deposit",  // Mark this as a deposit
+        });
+
+        await newTransaction.save();
 
     if (fundUser) {
         res.status(201).json({
             success: true,
-            message: "Fund added successfully",
+            message: "Fund added and deposit recorded successfully",
             fundUser
         })
     } else {
