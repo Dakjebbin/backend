@@ -43,8 +43,16 @@ const updateProfit = async (req, res) => {
         }
            
         
+        const newTransaction = new Transaction({
+            user: email,  
+            amount: profit,
+            type: "profit", 
+            status: "completed" // Mark this as a deposit
+        });
         // user.profit = Number(user.profit) + Number(profit);
         await user.save();
+        await newTransaction.save();
+
         
         res.status(200).json({
             success: true,
@@ -65,6 +73,39 @@ const deleteProfit = async (req, res) => {
     
 }
 
+const getTransactions = async (req, res) => {
+    const {email} = req.params;
+    const user = req.user;
+
+    if (user.email !== email) {
+        return res.status(403).json({ success: false, message: 'User not found or unauthorized' });
+      }
+    if (!email) {
+        return res.status(400).json({ success: false, message: 'Email is required' });
+      }
+        try {
+            const transactions = await Transaction.find({ user:email })
+     .sort({ date: -1 })  // Sort by date (newest first)
+      .exec();
+
+      if (transactions.length === 0) {
+        return res.status(404).json({ success: false, message: 'No transactions found for this user' });
+      }
 
 
-export {updateProfit, deleteProfit}
+            res.status(200).json({
+                success: true,
+                message: "User transactions fetched successfully",
+                transactions
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Internal server error " + error.message 
+            })
+        }
+}
+
+
+
+export {updateProfit, deleteProfit, getTransactions}
