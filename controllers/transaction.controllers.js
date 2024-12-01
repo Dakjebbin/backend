@@ -69,9 +69,7 @@ const updateProfit = async (req, res) => {
     
 }
 
-const deleteProfit = async (req, res) => {
-    
-}
+
 
 const getTransactions = async (req, res) => {
     const {email} = req.params;
@@ -96,7 +94,7 @@ const getTransactions = async (req, res) => {
             res.status(200).json({
                 success: true,
                 message: "User transactions fetched successfully",
-                transactions
+                data: transactions
             });
         } catch (error) {
             res.status(500).json({
@@ -108,4 +106,4 @@ const getTransactions = async (req, res) => {
 
 
 
-export {updateProfit, deleteProfit, getTransactions}
+export {updateProfit, getTransactions}

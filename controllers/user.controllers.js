@@ -317,4 +317,49 @@ const logout = async (req, res) => {
         }
    }
 
-export {register, login, userDetails, userDetail, validate, updateActiveStatus, logout} 
+const forgotPassword = async (req, res) => {
+    const {email} = req.body;
+
+    try {
+        const user = await User.findOne({email}).exec();
+        if (!user) {
+           res.status(404).json({
+            success: false,
+            message: "User not found",
+           }) 
+           return;
+        }
+        const port = process.env.PORT 
+        const secret = process.env.JWT_SECRET + user.password;
+        const token = jwt.sign({email:user.email, id: user._id}, secret, {expiresIn: "5m"});
+        const link = `http://localhost:${port}/reset-password/${user._id}/${token}`;
+        console.log(link);
+        
+    } catch (error) {
+        
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const {id, token} = req.params;
+    //const {password} = req.body;
+    try {
+        const user = await User.findById(id).exec();
+   if (!user) {
+    res.status(404).json({
+        success: false,
+        message: "User not found",
+    }) 
+    return;
+   }
+   const secret = process.env.JWT_SECRET + user.password;
+   const verify = jwt.verify(token, secret);
+   
+    } catch (error) {
+        
+    }
+    
+
+   
+}
+export {register, login, userDetails, userDetail, validate, updateActiveStatus, logout, forgotPassword, resetPassword}
