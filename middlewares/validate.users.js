@@ -31,7 +31,7 @@ export const validateUsers = async (req, res, next) => {
                         });
                         return;
                     }
-                    console.log("the valid user => ", validuser);
+                    
                     const accesstoken = jwt.sign({
                         blood: validuser?._id
                     },
@@ -45,7 +45,7 @@ export const validateUsers = async (req, res, next) => {
                   httpOnly: true,
                   secure: true,
                   sameSite:"none",
-                  maxAge: 40 * 1000,
+                  maxAge: 30 * 60 * 1000,
                  })
                   const { password, ...rest } = validuser._doc;
                     req.user = rest;
