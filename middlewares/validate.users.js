@@ -48,16 +48,11 @@ export const validateUsers = async (req, res, next) => {
                   maxAge: 40 * 1000,
                  })
                   const { password, ...rest } = validuser._doc;
-
                     req.user = rest;
-
             next();
                 }
             })
-
-            
-         
-        }
+        };
     } else {
             jwt.verify(accesstoken, process.env.AccessTOKEN, async (err, decoded) => {
                     if (err) {
@@ -74,18 +69,14 @@ export const validateUsers = async (req, res, next) => {
                                         message: "not found"
                                     })
                                     return;
-                            }
-
-                            
+                            }                        
           const { password, ...rest } = validuser._doc;
-
           req.user = rest;
                             next()
                     }
             })
-    }
-   
-};
+            }
+        };
 
 
 
