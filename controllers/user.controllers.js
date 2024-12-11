@@ -1,6 +1,8 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs"; 
 import jwt from "jsonwebtoken";
+import transporter from "../config/nodemailer.js";
+
 
 
 
@@ -327,6 +329,14 @@ const logout = async (req, res) => {
 const forgotPassword = async (req, res) => {
     const {email} = req.body;
 
+    if (!email) {
+        res.status(404).json({
+            success: false,
+            message: "Please provide email",
+        })
+        return;
+    }
+
     try {
         const user = await User.findOne({email}).exec();
         if (!user) {
@@ -336,14 +346,32 @@ const forgotPassword = async (req, res) => {
            }) 
            return;
         }
-        const port = process.env.PORT 
-        const secret = process.env.JWT_SECRET + user.password;
-        const token = jwt.sign({email:user.email, id: user._id}, secret, {expiresIn: "5m"});
-        const link = `http://localhost:${port}/reset-password/${user._id}/${token}`;
-        console.log(link);
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
+        user.resetOtp = otp;
+        user.resetOtpExpireAt = Date.now() + 15  * 60 * 1000;
+
+        await user.save();
+
+        const mailOption = {
+            from: process.env.EMAIL,
+            to: user.email,
+            subject: "Reset Password",
+            text: `Your OTP for reset password is: ${otp}. This OTP will expire very soon Use this OTP
+            in resetting your password`,
+        }
+        await transporter.sendMail(mailOption);
+
+        return res.status(200).json({
+            success: true,
+            message: "Otp sent to your email",
+          
+        })
         
     } catch (error) {
-        
+        res.status(500).json({
+            success: false,
+            message: "Internal server error " + error.message,
+          });  
     }
 }
 
@@ -363,7 +391,10 @@ const resetPassword = async (req, res) => {
    const verify = jwt.verify(token, secret);
    
     } catch (error) {
-        
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+          });
     }
     
 

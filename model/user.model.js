@@ -29,15 +29,6 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: [true, "Please enter your Password"],
     }, 
-    
-    // country:{
-    //     type: String,
-    //     required: [true, "Please enter your Country"],
-    // },
-    // balance: { 
-    //     type: Number, 
-    //     default: 0 
-    // },
      profit: { 
          type: Number, 
          default: 0 
@@ -46,13 +37,6 @@ const UserSchema = mongoose.Schema({
         type: String, 
         enum: ['active', 'blocked'], 
         default: 'active' },
-        
-        // transactionHistory: [{
-        //     amount: Number,
-        //     date: { type: Date, default: Date.now },
-        //     type: { type: String, enum: ['deposit', 'withdrawal', 'profit'], required: true }
-        // }],
-        
         investmentPlan: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'InvestmentPlan'
@@ -61,6 +45,14 @@ const UserSchema = mongoose.Schema({
             type: String, 
             default: "USER" 
         },
+        resetOtp: {
+            type: String,
+            default: ""
+        },
+        resetOtpExpireAt: {
+            type: Number,
+            default: 0
+        }
     
 },{
     timestamps: true,
