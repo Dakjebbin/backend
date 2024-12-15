@@ -19,7 +19,7 @@ const transactionSchema = mongoose.Schema({
 //     required: true
 //  },  // Bitcoin transaction hash
   status: { type: String, 
-    enum: ['pending', 'completed', 'failed'], 
+    enum: ['Pending', 'Completed', 'Failed'], 
     default: 'pending' },
 }, {
   timestamps: true

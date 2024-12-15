@@ -70,5 +70,9 @@ fundUser.amount += Number(amount);
     }
 }
 
+const getFundBalance = async (req , res) => {
+        
+}
+
 
 export { fundData}
