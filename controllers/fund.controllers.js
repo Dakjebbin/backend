@@ -74,6 +74,10 @@ const getFundData = async (req , res) => {
         const {email} = req.params;
         const validUser = req.user;
 
+        if (!email) {
+            return res.status(400).json({ success: false, message: 'Email parameter is required' });
+        }
+
         if (validUser.email !== email) {
             return res.status(403).json({ success: false, message: 'User not found or unauthorized' });
           }
