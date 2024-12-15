@@ -46,8 +46,8 @@ const updateProfit = async (req, res) => {
         const newTransaction = new Transaction({
             user: email,  
             amount: profit,
-            type: "profit", 
-            status: "completed" // Mark this as a deposit
+            type: "Profit", 
+            status: "Completed" // Mark this as a deposit
         });
         // user.profit = Number(user.profit) + Number(profit);
         await user.save();

@@ -42,7 +42,7 @@ fundUser.amount += Number(amount);
         const newTransaction = new Transaction({
             user: validUser.email,  
             amount: amount,
-            type: "deposit",  // Mark this as a deposit
+            type: "Deposit",  // Mark this as a deposit
         });
 
         await newTransaction.save();
