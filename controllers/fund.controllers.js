@@ -70,9 +70,29 @@ fundUser.amount += Number(amount);
     }
 }
 
-const getFundBalance = async (req , res) => {
-        
+const getFundData = async (req , res) => {
+        const {email} = req.params;
+        const validUser = req.user;
+
+        if (validUser.email !== email) {
+            return res.status(403).json({ success: false, message: 'User not found or unauthorized' });
+          }
+
+          try {
+            const user = await fundModel.findOne({email}).exec();
+
+            res.status(200).json({ success: true, 
+                message: "fund data fetched",
+                user
+            });
+
+          } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Internal server error " + error.message 
+            })
+          }
 }
 
 
-export { fundData}
+export { fundData, getFundData}
