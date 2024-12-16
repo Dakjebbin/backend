@@ -22,7 +22,7 @@ router.get("/validate", validateUsers, validate)
 router.patch("/status/:id", validateUsers, rolevalidation, updateActiveStatus)
 router.post("/logout", validateUsers, logout)
 router.post("/forgot-Password", forgotPassword)
-router.post("/reset-password/", resetPassword)
+router.post("/reset-password", resetPassword)
 
 
 export default router
