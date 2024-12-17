@@ -405,7 +405,7 @@ const validateOtp = async (req, res) => {
         }
 
         if(user.resetOtpExpireAt < Date.now()) {
-            res.status(401).json({
+            res.status(400).json({
                 success: false,
                 message: "OTP expired",
             })
