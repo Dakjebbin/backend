@@ -3,9 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import transporter from "../config/nodemailer.js";
 
-
-
-
 const register = async (req, res) => {
    
    try {
@@ -385,11 +382,11 @@ const forgotPassword = async (req, res) => {
 }
 
 //Validate Otp
-const validateOtp = async (res, req) => {
+const validateOtp = async (req, res) => {
     const {email, otp} = req.body;
 
     try {
-        const user = await User.findOne(email);
+        const user = await User.findOne({email});
 
         if (!user) {
             res.status(404).json({
