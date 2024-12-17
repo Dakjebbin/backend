@@ -8,7 +8,8 @@ import {
     updateActiveStatus,
     userDetail, 
     userDetails, 
-    validate } from '../controllers/user.controllers.js';
+    validate, 
+    validateOtp} from '../controllers/user.controllers.js';
 import { validateUsers } from '../middlewares/validate.users.js';
 import { rolevalidation } from '../middlewares/role.validation.js';
 
@@ -22,6 +23,7 @@ router.get("/validate", validateUsers, validate)
 router.patch("/status/:id", validateUsers, rolevalidation, updateActiveStatus)
 router.post("/logout", validateUsers, logout)
 router.post("/forgot-Password", forgotPassword)
+router.post("/validate-Otp", validateOtp)
 router.post("/reset-password", resetPassword)
 
 

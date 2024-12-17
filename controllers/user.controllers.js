@@ -384,6 +384,49 @@ const forgotPassword = async (req, res) => {
     }
 }
 
+//Validate Otp
+const validateOtp = async (res, req) => {
+    const {email, otp} = req.body;
+
+    try {
+        const user = await User.findOne(email);
+
+        if (!user) {
+            res.status(404).json({
+                success: false,
+                message: 'User not found',
+            })
+            return;
+        }
+
+        if(!user.resetOtp|| user.resetOtp !== otp ){
+            res.status(401).json({
+                success: false,
+                message: "Invalid OTP",
+            })
+            return;
+        }
+
+        if(user.resetOtpExpireAt < Date.now()) {
+            res.status(401).json({
+                success: false,
+                message: "OTP expired",
+            })
+            return;
+        }
+
+        res.status(200).json({
+            success:true,
+            message: "OTP Verified",
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error " + error.message,
+          }); 
+    }
+}
+
 //reset password
     const resetPassword = async (req, res) => {
     const {email, otp, newPassword} = req.body;
@@ -427,8 +470,8 @@ const forgotPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, salt)
    
         user.password = hashedPassword;
-        user.resetOtp = "";
-        user.resetOtpExpireAt = 0;
+        user.resetOtp = undefined;
+        user.resetOtpExpireAt = undefined;
 
         await user.save();
         
@@ -446,4 +489,4 @@ const forgotPassword = async (req, res) => {
 
    
 }
-export {register, login, userDetails, userDetail, validate, updateActiveStatus, logout, forgotPassword, resetPassword}
+export {register, login, userDetails, userDetail, validate, updateActiveStatus, logout, forgotPassword, validateOtp, resetPassword}
