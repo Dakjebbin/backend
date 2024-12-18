@@ -12,7 +12,7 @@ const fundSchema = mongoose.Schema({
     plan: {
        type: String,
        required: true
-    }
+    },
 },{ 
     timestamps: true
 });

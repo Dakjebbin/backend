@@ -7,6 +7,7 @@ const fundData = async (req, res) => {
     try {
             const validUser = req.user;
 
+
             const { amount, plan} = req.body;
 
             if (!validUser) {
@@ -28,21 +29,29 @@ const fundData = async (req, res) => {
                 return res.status(400).json({ error: "Invalid amount" });
               }
 
+              if (req.body.email !== validUser.email) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Email does not match authenticated user"
+                });
+            }
+
 const fundUser = await fundModel.findOneAndUpdate(
     {email:  validUser.email},
-    {amount, plan},
+    { $inc: { amount: amount }, plan },
     { new: true, upsert: true }
  );
 
 
 
-fundUser.amount += Number(amount);
+// fundUser.amount += Number(amount);
         await fundUser.save();
 
         const newTransaction = new Transaction({
             user: validUser.email,  
             amount: amount,
             type: "Deposit",  // Mark this as a deposit
+             status: "Pending"
         });
 
         await newTransaction.save();
