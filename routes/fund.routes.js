@@ -8,4 +8,5 @@ const router = express.Router();
 router.post("/fund", validateUsers, userActive, fundData)
 router.get("/fund/:email", validateUsers, getFundData)
 
+
 export default router

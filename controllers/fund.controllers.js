@@ -42,9 +42,6 @@ const fundUser = await fundModel.findOneAndUpdate(
     { new: true, upsert: true }
  );
 
-
-
-// fundUser.amount += Number(amount);
         await fundUser.save();
 
         const newTransaction = new Transaction({
@@ -106,6 +103,7 @@ const getFundData = async (req , res) => {
             })
           }
 }
+
 
 
 export { fundData, getFundData}
