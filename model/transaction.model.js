@@ -20,7 +20,7 @@ const transactionSchema = mongoose.Schema({
 //  },  // Bitcoin transaction hash
   status: { type: String, 
     enum: ['Pending', 'Completed', 'Failed'], 
-    default: 'pending' },
+    default: 'Pending' },
     
     imageUrl: { // Store the Cloudinary URL
       type: String,
