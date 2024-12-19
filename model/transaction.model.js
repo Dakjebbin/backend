@@ -21,6 +21,11 @@ const transactionSchema = mongoose.Schema({
   status: { type: String, 
     enum: ['Pending', 'Completed', 'Failed'], 
     default: 'pending' },
+    
+    imageUrl: { // Store the Cloudinary URL
+      type: String,
+     // required: true
+    },
 }, {
   timestamps: true
 })
