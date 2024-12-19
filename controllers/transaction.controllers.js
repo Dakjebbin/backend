@@ -1,6 +1,7 @@
 import User from "../model/user.model.js";
 import Transaction from "../model/transaction.model.js";
 import cloudinary from "../utils/cloudinary.js";
+import multer from "multer";
 
 // const getUserProfile = async (req, res) => {
 //     try {
@@ -105,48 +106,50 @@ const getTransactions = async (req, res) => {
         }
 }
 
+
+const storage = multer.memoryStorage();  // Store file in memory for uploading to Cloudinary
+const upload = multer({ storage: storage });
+
 const imageUpload = async (req, res) => {
-     const {image} = req.body;
     const validUser = req.user;
     // const uploadPreset = 'WealthWaveMain';
 
-    if (!image) {
-        return res.status(400).json({ success: false, message: 'No Image Data received' });
-    }
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No image file uploaded' });
+      }
 
     try {
-        // Upload image to Cloudinary
-        const result = await cloudinary.uploader.upload(image, {
-            // upload_preset: uploadPreset,
-        folder: 'payments/proofs',
-        public_id: validUser.email
-        });
-       
-
-        // Save the transaction with the image URL
-        const newTransaction = new Transaction({
-            user: validUser,
-            imageUrl: result.secure_url
-        });
-
-        await newTransaction.save();
-
-            // Respond with the secure URL of the uploaded image
-            res.status(200).json({
+        const result = await cloudinary.uploader.upload(req.file.buffer,
+            {
+              folder: 'payments/proofs',
+              public_id: validUser.email,
+            })
+          
+      
+              // Save the transaction with the image URL
+              const newTransaction = new Transaction({
+                user: validUser,
+                imageUrl: result.secure_url,
+              });
+      
+              await newTransaction.save();
+      
+              // Respond with the secure URL of the uploaded image
+              res.status(200).json({
                 success: true,
                 message: "Image uploaded successfully",
                 url: result.secure_url,
-            });
-    } catch (error) {
-        res.status(500).json({
+              });
+        } catch (error) {
+          res.status(500).json({
             success: false,
             message: "Internal server error",
-            error: error.message || error 
-        });
-    }
+            error: error.message || error,
+          });
+        }
 };
 
 
 
 
-export {updateProfit, getTransactions, imageUpload}
+export {updateProfit, getTransactions, imageUpload, upload}
