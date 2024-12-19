@@ -119,35 +119,46 @@ const imageUpload = async (req, res) => {
       }
 
     try {
-        const result = await cloudinary.uploader.upload(req.file.buffer,
+        const uploadStream = cloudinary.uploader.upload_stream(
             {
               folder: 'payments/proofs',
               public_id: validUser.email,
-            })
+            }, async (error, result) => {
+                if (error) {
+                  return res.status(500).json({
+                    success: false,
+                    message: "Cloudinary upload failed",
+                    error: error.message || error,
+                  });
+                }
           
-      
-              // Save the transaction with the image URL
-              const newTransaction = new Transaction({
-                user: validUser,
-                imageUrl: result.secure_url,
+                // Save the transaction with the image URL
+                const newTransaction = new Transaction({
+                  user: validUser,
+                  imageUrl: result.secure_url,
+                });
+          
+                await newTransaction.save();
+          
+                // Respond with the secure URL of the uploaded image
+                res.status(200).json({
+                  success: true,
+                  message: "Image uploaded successfully",
+                  url: result.secure_url,
+                });
               });
-      
-              await newTransaction.save();
-      
-              // Respond with the secure URL of the uploaded image
-              res.status(200).json({
-                success: true,
-                message: "Image uploaded successfully",
-                url: result.secure_url,
+          
+              // Pass the file buffer to the upload stream
+              uploadStream.end(req.file.buffer);
+          
+            } catch (error) {
+              res.status(500).json({
+                success: false,
+                message: "Internal server error",
+                error: error.message || error,
               });
-        } catch (error) {
-          res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error.message || error,
-          });
-        }
-};
+            }
+          };
 
 
 
