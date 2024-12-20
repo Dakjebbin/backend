@@ -122,12 +122,26 @@ const imageUpload = async (req, res) => {
             public_id: validUser.email,
         });
 
+        const optimizeUrl = cloudinary.url(result.public_id, {
+            fetch_format: 'auto',
+            quality: 'auto'
+        });
+
+        const autoCropUrl = cloudinary.url(result.public_id, {
+            crop: 'auto',
+            gravity: 'auto',
+            width: 500,
+            height: 500,
+        });
+
         // Save the transaction with the image URL, type, and amount
         const newTransaction = new Transaction({
-            user: validUser,
+            user: validUser.email,
             type:  type || 'Payment',  // Set type (default if missing)
             amount: amount || 0,  // Set amount (default if missing)
             imageUrl: result.secure_url,
+            optimizedImageUrl: optimizeUrl,  // Optimized image URL
+            croppedImageUrl: autoCropUrl,
             status: 'Pending', 
         });
 
