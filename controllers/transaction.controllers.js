@@ -137,7 +137,7 @@ const imageUpload = async (req, res) => {
         // Save the transaction with the image URL, type, and amount
         const newTransaction = new Transaction({
             user: validUser.email,
-            type:  type || 'Payment',  // Set type (default if missing)
+            type:  type || 'Deposit',  // Set type (default if missing)
             amount: amount || 0,  // Set amount (default if missing)
             imageUrl: result.secure_url,
             optimizedImageUrl: optimizeUrl,  // Optimized image URL
