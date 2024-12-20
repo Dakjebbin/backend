@@ -14,7 +14,7 @@ const app = express();
 const db = process.env.MONGODB_LINK
 
 
-app.use(express.json());
+app.use(express.json({limit:'10mb'}));
 app.use(cookieParser());
 app.use(cors({
     origin:[ process.env.CLIENT_URL, "http://localhost:5173", "https://wealthwave-delta.vercel.app"],
