@@ -1,7 +1,7 @@
 import User from "../model/user.model.js";
 import Transaction from "../model/transaction.model.js";
 import cloudinary from "../utils/cloudinary.js";
-import multer from "multer";
+
 
 // const getUserProfile = async (req, res) => {
 //     try {
@@ -107,60 +107,49 @@ const getTransactions = async (req, res) => {
 }
 
 
-const storage = multer.memoryStorage();  // Store file in memory for uploading to Cloudinary
-const upload = multer({ storage: storage });
-
 const imageUpload = async (req, res) => {
+    const { image, type, amount } = req.body; 
     const validUser = req.user;
-    // const uploadPreset = 'WealthWaveMain';
 
-    if (!req.file) {
-        return res.status(400).json({ success: false, message: 'No image file uploaded' });
-      }
+    if (!image) {
+        return res.status(400).json({ success: false, message: 'No Image Data received' });
+    }
 
     try {
-        const uploadStream = cloudinary.uploader.upload_stream(
-            {
-              folder: 'payments/proofs',
-              public_id: validUser.email,
-            }, async (error, result) => {
-                if (error) {
-                  return res.status(500).json({
-                    success: false,
-                    message: "Cloudinary upload failed",
-                    error: error.message || error,
-                  });
-                }
-          
-                // Save the transaction with the image URL
-                const newTransaction = new Transaction({
-                  user: validUser,
-                  imageUrl: result.secure_url,
-                });
-          
-                await newTransaction.save();
-          
-                // Respond with the secure URL of the uploaded image
-                res.status(200).json({
-                  success: true,
-                  message: "Image uploaded successfully",
-                  url: result.secure_url,
-                });
-              });
-          
-              // Pass the file buffer to the upload stream
-              uploadStream.end(req.file.buffer);
-          
-            } catch (error) {
-              res.status(500).json({
-                success: false,
-                message: "Internal server error",
-                error: error.message || error,
-              });
-            }
-          };
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(image, {
+            folder: 'payments/proofs',
+            public_id: validUser.email,
+        });
+
+        // Save the transaction with the image URL, type, and amount
+        const newTransaction = new Transaction({
+            user: validUser,
+            type:  type || 'Payment',  // Set type (default if missing)
+            amount: amount || 0,  // Set amount (default if missing)
+            imageUrl: result.secure_url,
+            status: 'Pending', 
+        });
+
+        await newTransaction.save();
+
+        // Respond with the secure URL of the uploaded image
+        res.status(200).json({
+            success: true,
+            message: 'Image uploaded successfully',
+            url: result.secure_url,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message || error,
+        });
+    }
+};
 
 
 
 
-export {updateProfit, getTransactions, imageUpload, upload}
+
+export {updateProfit, getTransactions, imageUpload}
