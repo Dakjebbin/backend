@@ -46,7 +46,7 @@ const fundUser = await fundModel.findOneAndUpdate(
 
         const newTransaction = new Transaction({
             user: validUser.email,  
-            amount: amount,
+            amount,
             type: "Deposit",  // Mark this as a deposit
              status: "Pending"
         });
